@@ -1,5 +1,5 @@
 inventory
 terraform.tfvars
 infrustructure.tf
-.terraform
+.terraform/
 .terraform.lock.hcl
