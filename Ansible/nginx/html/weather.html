@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Weather in Kyiv</title>
+</head>
+<body>
+    <h1>Weather in Kyiv</h1>
+    <div id="weather-info"></div>
+
+    <script>
+        function getWeather() {
+            fetch('http://api.weatherapi.com/v1/current.json?key={{ api_key }}=kiev&aqi=yes')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('weather-info').innerHTML = `Time: ${data.location.localtime}, Temperature: ${data.current.temp_c}°C, Describe: ${data.current.condition.text}`;
+                })
+                .catch(error => {
+                    console.log('Error with connect to weather:', error);
+                });
+        }
+
+        setInterval(getWeather, 5000);
+
+        getWeather();
+    </script>
+</body>
+</html>

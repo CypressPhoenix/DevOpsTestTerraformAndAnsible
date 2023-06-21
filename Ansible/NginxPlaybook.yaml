@@ -1,0 +1,57 @@
+---
+- name: Install Nginx and configure
+  hosts: all
+  become: yes
+
+  vars:
+    source_file_nginx_html: ~/Test_task_DevOps/Ansible/nginx/html/weather.html
+    source_tpl_file_nginx_conf: ~/Test_task_DevOps/Ansible/nginx/nginx.conf.j2
+    destination_file_nginx_conf: /etc/nginx/nginx.conf
+    destination_file_html: /var/www/devops/html/weather.html
+
+  tasks:
+    - name: Install Nginx
+      dnf:
+        name: nginx
+        state: present
+
+    - name: Render Nginx configuration file
+      template:
+        src: "{{ source_tpl_file_nginx_conf }}"
+        dest: "{{ destination_file_nginx_conf }}"
+      notify:
+        - Restart Nginx
+
+#    - name: Copy config file
+#      copy:
+#        src: "{{ source_file_nginx_conf }}"
+#        dest: "{{ destination_file_nginx_conf }}"
+#        mode: "0644"
+#      notify:
+#        - Restart Nginx
+#
+#    - name: Modify Nginx configuration file
+#      replace:
+#        path: /etc/nginx/nginx.conf
+#        regexp: '^(.*server_name\s+)([^;]+)(.*)$'
+#        replace: '\1{{ public_dns }};'
+
+
+
+    - name: Creating a directory
+      ansible.builtin.file:
+        path: "{{ destination_file_html }}"
+        state: directory
+
+    - name: Copy html file
+      template:
+        src: "{{ source_file_nginx_html }}"
+        dest: "{{ destination_file_html }}"
+      notify:
+        - Restart Nginx
+
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
